@@ -38,12 +38,12 @@ router.post('/message', function(req, res) {
 });
 
 
-router.get('/hashtags', function(req, res) {
+router.get('/messages', function(req, res) {
 
-    Message.find({channel_id:req.body.channel_id,
-                  hashtag: req.body.hashtag,
-                  count:req.body.count,
-                  start: req.body.count},
+    Message.find({channel_id:req.query.channel_id,
+                  hashtag: req.query.hashtag,
+                  count:req.query.count,
+                  start: req.query.count},
         function (err, messages) {
             if(err) res.json({messages, Error:err});
 

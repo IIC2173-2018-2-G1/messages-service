@@ -26,7 +26,7 @@ This microservice uses the authentication microservice to validate requests.
 ```
 
 - Get messages (validate):
-> GET /hashtags/{content}
+> GET /messages/{content}
 ```javascript
 {
   channel_id: integer,
