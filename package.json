@@ -1,6 +1,9 @@
 {
   "name": "messages-service",
   "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "express": "latest",
     "mongoose": "latest",
