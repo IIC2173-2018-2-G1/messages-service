@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var app        = express();
 
 //cambiar el string de abajo para conectarse a base de datos de mongo
-mongoose.connect('mongodb://localhost:27017',{ useNewUrlParser: true });
+mongoose.connect('mongodb://mongodb:27017',{ useNewUrlParser: true });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
