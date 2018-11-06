@@ -8,7 +8,7 @@ This microservice uses the authentication microservice to validate requests.
 ## Admitted Requests
 
 - New Message:
-> POST /message
+> POST /messages
 ```javascript
 {
     channel_id: integer
