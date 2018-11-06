@@ -17,7 +17,7 @@ var router = express.Router();
 
 var Message= require('./app/models/message');
 
-router.post('/message', function(req, res) {
+router.post('/messages', function(req, res) {
     var message = new Message();
 
     message.channel_id = req.body.channel_id;
