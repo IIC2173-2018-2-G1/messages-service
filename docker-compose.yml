@@ -1,12 +1,17 @@
-version: '3'
+version: "3"
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  app:
+    container_name: express-mongo
+    restart: always
+    build: ./
     ports:
-     - "8083:8080"
+      - "80:8083"
     volumes:
-     - .:/code
-    environment:
-      - NODE_ENV=production
+      - .:/app
+    links:
+      - mongodb:mongo
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - "27017:27017"
