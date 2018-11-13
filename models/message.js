@@ -7,4 +7,4 @@ var MessageSchema   = new Schema({
     content: String,
 });
 
-module.exports = mongoose.model('Message', MessageSchema);
+mongoose.model('Message', MessageSchema);

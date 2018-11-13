@@ -5,8 +5,9 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "body-parser": "latest",
+    "cors": "^2.8.5",
     "express": "latest",
-    "mongoose": "latest",
-    "body-parser": "latest"
+    "mongoose": "latest"
   }
 }

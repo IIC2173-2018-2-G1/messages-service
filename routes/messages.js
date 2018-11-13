@@ -1,23 +1,8 @@
+const mongoose = require('mongoose');
+const router = require('express').Router();
+const Message=mongoose.model('Message');
 
-var express    = require('express');
-var mongoose   = require('mongoose');
-var bodyParser = require('body-parser');
-
-var app        = express();
-
-//cambiar el string de abajo para conectarse a base de datos de mongo
-mongoose.connect('mongodb://mongodb:27017',{ useNewUrlParser: true });
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-var port = process.env.PORT || 8083;
-
-var router = express.Router();
-
-var Message= require('./app/models/message');
-
-router.post('/messages', function(req, res) {
+router.post('/', function(req, res) {
     var message = new Message();
 
     message.channel_id = req.body.channel_id;
@@ -38,7 +23,7 @@ router.post('/messages', function(req, res) {
 });
 
 
-router.get('/messages', function(req, res) {
+router.get('/', function(req, res) {
     hashtag = req.query.hashtag;
     count = req.query.count;
     start = req.query.start;
@@ -76,9 +61,3 @@ router.get('/messages', function(req, res) {
     });
 
 });
-
-
-app.use('/', router);
-
-app.listen(port);
-console.log('Message service listening on port' + port);
