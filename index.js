@@ -22,8 +22,8 @@ mongoose.connect('mongodb://mongodb:27017/messages',{ useNewUrlParser: true });
 mongoose.set('debug', true);
 
 
-require('./models/messages');
+require('./models/message');
 app.use(require('./routes'));
 
 app.listen(port);
-console.log('Message service listening on port' + port);
+console.log('Message service listening on port ' + port);
