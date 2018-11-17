@@ -11,7 +11,7 @@ This microservice uses the authentication microservice to validate requests.
 > POST /messages
 ```javascript
 {
-    channel_id: integer
+    channel_id: string
     response_to: integer (default: 0)
     content: string
 }
