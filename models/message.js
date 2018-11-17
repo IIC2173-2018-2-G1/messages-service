@@ -3,7 +3,7 @@ var Schema       = mongoose.Schema;
 
 var MessageSchema   = new Schema({
     channel_id: String,
-    response_to: {type:Number, default: 0},
+    response_to: {type:String, default: 0},
     content: String,
 });
 

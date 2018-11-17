@@ -18,7 +18,7 @@ var port = process.env.PORT || 8083;
 
 var router = express.Router();
 
-mongoose.connect('mongodb://mongodb:27017/messages',{ useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/messages',{ useNewUrlParser: true });
 mongoose.set('debug', true);
 
 

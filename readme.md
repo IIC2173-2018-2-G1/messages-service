@@ -11,8 +11,8 @@ This microservice uses the authentication microservice to validate requests.
 > POST /messages
 ```javascript
 {
-    channel_id: integer
-    response_to: integer (default: 0)
+    channel_id: string
+    response_to: string (default: 0)
     content: string
 }
 ```
@@ -31,10 +31,10 @@ This microservice uses the authentication microservice to validate requests.
 > Example: /messages?channel_id=1&hashtag=""&count=10&start=0
 ```javascript
 {
-  channel_id: integer,
+  channel_id: string,
   hashtag: string (optional),
   count: integer (max_value: 30),
-  start: 0
+  start: integer 
 }
 ```
 
