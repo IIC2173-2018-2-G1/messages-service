@@ -8,6 +8,7 @@
     "body-parser": "latest",
     "cors": "^2.8.5",
     "express": "latest",
-    "mongoose": "latest"
+    "mongoose": "latest",
+    "request": "^2.88.0"
   }
 }

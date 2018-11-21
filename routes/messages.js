@@ -1,3 +1,4 @@
+const request = require('request');
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const Message=mongoose.model('Message');
@@ -43,6 +44,21 @@ router.get('/', function(req, res) {
                 };
                 messages = with_hashtag
             }
+
+
+            // Con servicio hashtag
+            // if (hashtag !== undefined){
+            //     request('http://localhost.com:5000/hashtag', function (error, response, body) {
+            //         if (!error && response.statusCode == 200) {
+            //             for(let hashtagObj of body){
+            //                 if (hashtagObj.hashtag_value===hashtag){
+            //                     messages.push(messages.find((message)=>message.id===hashtagObj.message_id);
+            //                 }
+            //             }
+            //         } 
+            //     });
+            // }
+
         
             // start filter
             if (start !== undefined){
