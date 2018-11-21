@@ -1,6 +1,6 @@
 {
   "name": "messages-service",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "start": "node app.js"
   },
