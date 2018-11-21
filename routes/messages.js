@@ -32,16 +32,6 @@ router.get('/', function(req, res) {
         function (err, messages) {
             if(err) res.json({messages, Error:err});
 
-            // start filter
-            if (start !== undefined){
-                messages = messages.slice(parseInt(start));
-            };
-
-            // count filter
-            if (count !== undefined){
-                messages = messages.slice(0,parseInt(count));
-            };
-
             //hashtag filter
             if (hashtag !== undefined){
                 with_hashtag = []
@@ -53,6 +43,16 @@ router.get('/', function(req, res) {
                 };
                 messages = with_hashtag
             }
+        
+            // start filter
+            if (start !== undefined){
+                messages = messages.slice(parseInt(start));
+            };
+        
+            // count filter
+            if (count !== undefined){
+                messages = messages.slice(0,parseInt(count));
+            };
             
             //filtrar solo si hashtag in message.content +++++ su split y chao
             //obtener solo el numero de count +++++ su corte a la lista y chao
