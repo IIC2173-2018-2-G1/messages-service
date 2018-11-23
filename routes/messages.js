@@ -27,8 +27,15 @@ router.post("/", function(req, res) {
   message.channel_id = channel_id;
   message.created_on = new Date();
 
-  if (response_to !== undefined) message.response_to = response_to;
-
+  if (response_to !== undefined){
+    Message.findById(response_to, function(error, message_found){
+      if(error){
+        res.status(500).json({ error })
+      } else {
+        message.response_to = response_to;
+      }
+    });
+  } 
   message
     .save()
     .then(message => {
