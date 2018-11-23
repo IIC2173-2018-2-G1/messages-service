@@ -1,10 +1,11 @@
 {
   "name": "messages-service",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node index.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "latest",
     "cors": "^2.8.5",
     "express": "latest",

@@ -1,10 +1,23 @@
-var mongoose     = require('mongoose');
-var Schema       = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var MessageSchema   = new Schema({
-    channel_id: String,
-    response_to: {type:String, default: 0},
-    content: String,
+const MessageSchema = new Schema({
+  user_id: String,
+  channel_id: String,
+  response_to: String,
+  content: String,
+  created_on: Date
 });
 
-mongoose.model('Message', MessageSchema);
+MessageSchema.methods.toJSON = function() {
+  return {
+    id: this._id,
+    user_id: this.user_id,
+    channel_id: this.channel_id,
+    response_to: this.response_to,
+    content: this.content,
+    created_on: this.created_on,
+  };
+};
+
+mongoose.model("Message", MessageSchema);

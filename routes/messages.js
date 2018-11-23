@@ -1,65 +1,111 @@
-const mongoose = require('mongoose');
-const router = require('express').Router();
-const Message=mongoose.model('Message');
+const mongoose = require("mongoose");
+const router = require("express").Router();
+const Message = mongoose.model("Message");
+const axios = require("axios");
+const { required_members } = require("../utils");
 
-router.post('/', function(req, res) {
-    var message = new Message();
+const re = /(?:^|\s)#([^\s]+)\b/g;
 
-    message.channel_id = req.body.channel_id;
-    message.response_to = req.body.response_to;
-    message.content = req.body.content;
+router.post("/", function(req, res) {
+  if (!required_members(req.body, ["channel_id", "content"], res)) return;
 
-    // save the bear and check for errors
-    message.save(function(err) {
-        if (err)
-            res.json({ message: 'Error creating message',
-                       Error: err});
+  const {
+    body: { channel_id, response_to, content }
+  } = req;
+  const user_id = req.header("X-User-ID");
 
-        res.json({ message: message,
-                   Error: ""});
-    });
+  // get hashtags in message
+  const hashtags = [];
+  let match;
+  while ((match = re.exec(content))) {
+    hashtags.push(match[1]);
+  }
 
+  const message = new Message();
+  message.user_id = user_id;
+  message.content = content;
+  message.channel_id = channel_id;
+  message.created_on = new Date();
 
+  if (response_to !== undefined) message.response_to = response_to;
+
+  message
+    .save()
+    .then(message => {
+      if (hashtags.length > 0) {
+        console.log({ message_id: message.id, hashtags });
+        axios.post("http://hashtag-service:8085/", {
+          message_id: message.id,
+          hashtags
+        });
+      }
+      res.status(200).json(message.toJSON());
+    })
+    .catch(error => res.status(500).json({ error }));
 });
 
+router.get("/", function(req, res) {
+  let { channel_id, start, count, hashtag } = req.query;
+  start = start || 0;
+  const limit = count || 50;
 
-router.get('/', function(req, res) {
-    hashtag = req.query.hashtag;
-    count = req.query.count;
-    start = req.query.start;
-
-    Message.find({channel_id: req.query.channel_id},
-        function (err, messages) {
-            if(err) res.json({messages, Error:err});
-
-            // start filter
-            if (start !== undefined){
-                messages = messages.slice(parseInt(start));
-            };
-
-            // count filter
-            if (count !== undefined){
-                messages = messages.slice(0,parseInt(count));
-            };
-
-            //hashtag filter
-            if (hashtag !== undefined){
-                with_hashtag = []
-                for (i = 0; i < messages.length;i++){
-                    list = messages[i].content.split(" ");
-                    if (list.indexOf("#" + hashtag) >= 0){
-                        with_hashtag.push(messages[i])
-                    }
-                };
-                messages = with_hashtag
-            }
-            
-            //filtrar solo si hashtag in message.content +++++ su split y chao
-            //obtener solo el numero de count +++++ su corte a la lista y chao
-            //partir la cuenta desde start +++++ 
-            res.json({messages, Error:""});
-    });
-
+  if (typeof channel_id !== "undefined") {
+    Message.find({ channel_id })
+      .select([
+        "id",
+        "user_id",
+        "channel_id",
+        "response_to",
+        "content",
+        "created_on"
+      ])
+      .limit(limit)
+      .skip(start)
+      .sort({ created_on: "desc" })
+      .exec()
+      .then(messages => res.json(messages))
+      .catch(error => res.status(500).json({ error }));
+  } else if (typeof hashtag !== "undefined") {
+    mongoose.connection.db
+      .collection("hashtags")
+      .aggregate([
+        { $match: { name: hashtag } },
+        { $unwind: "$messages" },
+        {
+          $addFields: {
+            message_id: { $toObjectId: "$messages" }
+          }
+        },
+        {
+          $lookup: {
+            from: "messages",
+            localField: "message_id",
+            foreignField: "_id",
+            as: "message"
+          }
+        },
+        { $unwind: "$message" },
+        { $replaceRoot: { newRoot: "$message" } },
+        {
+          $project: {
+            _id: 0,
+            id: "$_id",
+            user_id: 1,
+            channel_id: 1,
+            response_to: 1,
+            content: 1,
+            created_on: 1
+          }
+        }
+      ])
+      .toArray()
+      .then(messages => res.json(messages))
+      .catch(error => res.status(500).json({ error }));
+  } else {
+    res
+      .status(405)
+      .json({ error: "must define at least one of `channel_id` or `hashtag`" });
+  }
 });
 
-module.exports=router;
+module.exports = router;

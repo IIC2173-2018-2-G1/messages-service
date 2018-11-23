@@ -18,11 +18,12 @@ var port = process.env.PORT || 8083;
 
 var router = express.Router();
 
-mongoose.connect('mongodb://mongodb:27017/messages',{ useNewUrlParser: true });
+mongoose.connect(process.env.DB, { useNewUrlParser: true });
 mongoose.set('debug', true);
 
 
 require('./models/message');
+require('./models/hashtag');
 app.use(require('./routes'));
 
 app.listen(port);
