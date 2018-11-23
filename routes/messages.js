@@ -46,8 +46,8 @@ router.post("/", function(req, res) {
 
 router.get("/", function(req, res) {
   let { channel_id, start, count, hashtag } = req.query;
-  start = start || 0;
-  const limit = count || 50;
+  start = parseInt(start) || 0;
+  const limit = parseInt(count) || 50;
 
   if (typeof channel_id !== "undefined") {
     Message.find({ channel_id })
