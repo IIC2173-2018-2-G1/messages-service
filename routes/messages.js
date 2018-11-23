@@ -1,15 +1,8 @@
-<<<<<<< HEAD
 const mongoose = require("mongoose");
 const router = require("express").Router();
 const Message = mongoose.model("Message");
 const axios = require("axios");
 const { required_members } = require("../utils");
-=======
-const request = require('request');
-const mongoose = require('mongoose');
-const router = require('express').Router();
-const Message=mongoose.model('Message');
->>>>>>> f81664c0054c10421d876f2458c1508475f762cd
 
 const re = /(?:^|\s)#([^\s]+)\b/g;
 
