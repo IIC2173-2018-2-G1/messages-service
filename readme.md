@@ -12,7 +12,7 @@ This microservice uses the authentication microservice to validate requests.
 ```javascript
 {
     channel_id: string
-    response_to: string (default: 0)
+    response_to: string (default: "0")
     content: string
 }
 ```
