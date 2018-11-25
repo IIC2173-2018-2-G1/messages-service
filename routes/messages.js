@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const router = require("express").Router();
 const Message = mongoose.model("Message");
 const axios = require("axios");
-const { required_members } = require("../utils");
+const { required_members, is_valid_id_for_collection } = require("../utils");
 
-const re = /(?:^|\s)#([^\s]+)\b/g;
+const re = /(?:^|\s)#([\w-]+)\b/g;
 
 router.post("/", async function(req, res) {
   if (!required_members(req.body, ["channel_id", "content"], res)) return;
@@ -28,33 +28,32 @@ router.post("/", async function(req, res) {
   message.created_on = new Date();
   message.reactions = [];
 
+  if (
+    !(await is_valid_id_for_collection(
+      channel_id,
+      "channels",
+      { success: "false", message: "invalid channel_id" },
+      res
+    ))
+  )
+    return;
+
   if (response_to !== undefined) {
-    const response_msg = await Message.findById(response_to).exec()
-    if (!response_msg) {
-      return res.status(400).json({
-        success: "false",
-        message: "invalid response_to id"
-      });
-    }
-    if (response_msg.channel_id !== channel_id){
+    const response_msg = await is_valid_id_for_collection(
+      response_to,
+      "messages",
+      { success: "false", message: "invalid response_to id" },
+      res
+    );
+    if (!response_msg) return;
+
+    if (response_msg.channel_id !== channel_id) {
       return res.status(400).json({
         success: "false",
         message: "response_to message must be on the same channel"
       });
     }
-  }
-
-  const _id = new ObjectId(channel_id);
-
-  const channel = await mongoose.connection.db
-    .collection("channels")
-    .findOne({ _id });
-
-  if (!channel) {
-    return res.status(400).json({
-      success: "false",
-      message: "invalid channel_id"
-    });
+    message.response_to = response_to;
   }
 
   message

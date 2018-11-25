@@ -7,7 +7,12 @@ const MessageSchema = new Schema({
   response_to: String,
   content: String,
   created_on: Date,
-  reactions: [Object]
+  reactions: [
+    {
+      reaction_id: String,
+      users: [String]
+    }
+  ]
 });
 
 MessageSchema.methods.toJSON = function() {
@@ -18,6 +23,7 @@ MessageSchema.methods.toJSON = function() {
     response_to: this.response_to,
     content: this.content,
     created_on: this.created_on,
+    reactions: this.reactions || []
   };
 };
 
