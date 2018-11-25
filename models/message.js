@@ -6,7 +6,8 @@ const MessageSchema = new Schema({
   channel_id: String,
   response_to: String,
   content: String,
-  created_on: Date
+  created_on: Date,
+  reactions: [Object]
 });
 
 MessageSchema.methods.toJSON = function() {

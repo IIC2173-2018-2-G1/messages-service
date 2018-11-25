@@ -6,7 +6,7 @@ const { required_members } = require("../utils");
 
 const re = /(?:^|\s)#([^\s]+)\b/g;
 
-router.post("/", function(req, res) {
+router.post("/", async function(req, res) {
   if (!required_members(req.body, ["channel_id", "content"], res)) return;
 
   const {
@@ -26,16 +26,37 @@ router.post("/", function(req, res) {
   message.content = content;
   message.channel_id = channel_id;
   message.created_on = new Date();
+  message.reactions = [];
 
-  if (response_to !== undefined){
-    Message.findById(response_to, function(error, message_found){
-      if(error){
-        res.status(500).json({ error })
-      } else {
-        message.response_to = response_to;
-      }
+  if (response_to !== undefined) {
+    const response_msg = await Message.findById(response_to).exec()
+    if (!response_msg) {
+      return res.status(400).json({
+        success: "false",
+        message: "invalid response_to id"
+      });
+    }
+    if (response_msg.channel_id !== channel_id){
+      return res.status(400).json({
+        success: "false",
+        message: "response_to message must be on the same channel"
+      });
+    }
+  }
+
+  const _id = new ObjectId(channel_id);
+
+  const channel = await mongoose.connection.db
+    .collection("channels")
+    .findOne({ _id });
+
+  if (!channel) {
+    return res.status(400).json({
+      success: "false",
+      message: "invalid channel_id"
     });
-  } 
+  }
+
   message
     .save()
     .then(message => {
@@ -64,7 +85,8 @@ router.get("/", function(req, res) {
         "channel_id",
         "response_to",
         "content",
-        "created_on"
+        "created_on",
+        "reactions"
       ])
       .limit(limit)
       .skip(start)
@@ -93,6 +115,7 @@ router.get("/", function(req, res) {
         },
         { $unwind: "$message" },
         { $replaceRoot: { newRoot: "$message" } },
+        { $sort: { created_on: -1 } },
         {
           $project: {
             _id: 0,
@@ -101,7 +124,8 @@ router.get("/", function(req, res) {
             channel_id: 1,
             response_to: 1,
             content: 1,
-            created_on: 1
+            created_on: 1,
+            reactions: 1
           }
         }
       ])
