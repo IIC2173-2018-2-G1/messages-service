@@ -60,7 +60,6 @@ router.post("/", async function(req, res) {
     .save()
     .then(message => {
       if (hashtags.length > 0) {
-        console.log({ message_id: message.id, hashtags });
         axios.post("http://hashtag-service:8085/", {
           message_id: message.id,
           hashtags
